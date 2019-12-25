@@ -1,6 +1,16 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {StyleSheet, requireNativeComponent, NativeModules, View, ViewPropTypes, Image, Platform, findNodeHandle} from 'react-native';
+import {
+  StyleSheet,
+  requireNativeComponent,
+  NativeModules,
+  View,
+  ViewPropTypes,
+  Image,
+  Platform,
+  findNodeHandle,
+  UIManager,
+} from 'react-native';
 import resolveAssetSource from 'react-native/Libraries/Image/resolveAssetSource';
 import TextTrackType from './TextTrackType';
 import FilterType from './FilterType';
@@ -20,24 +30,44 @@ export default class Video extends Component {
     super(props);
 
     this.state = {
-      showPoster: !!props.poster
+      showPoster: !!props.poster,
+      paused: false,
+      rate: 1.0
     };
   }
+
+  play = () => {
+    console.log('play');
+    this.setState({paused: false});
+  };
+
+  pause = () => {
+    console.log('pause');
+    this.setState({paused: true});
+  };
+
+  stop = ()=>{
+
+  };
+
+  setSpeed = (speed)=>{
+    this.setState({rate:speed});
+  };
 
   setNativeProps(nativeProps) {
     this._root.setNativeProps(nativeProps);
   }
-  
+
   toTypeString(x) {
     switch (typeof x) {
       case "object":
-        return x instanceof Date 
-          ? x.toISOString() 
+        return x instanceof Date
+          ? x.toISOString()
           : JSON.stringify(x); // object, null
       case "undefined":
         return "";
       default: // boolean, number, string
-        return x.toString();      
+        return x.toString();
     }
   }
 
@@ -53,7 +83,7 @@ export default class Video extends Component {
 
   seek = (time, tolerance = 100) => {
     if (isNaN(time)) throw new Error('Specified time is not a number');
-    
+
     if (Platform.OS === 'ios') {
       this.setNativeProps({
         seek: {
@@ -124,7 +154,7 @@ export default class Video extends Component {
     if (this.props.onBandwidthUpdate) {
       this.props.onBandwidthUpdate(event.nativeEvent);
     }
-  };  
+  };
 
   _onSeek = (event) => {
     if (this.props.onSeek) {
@@ -192,7 +222,7 @@ export default class Video extends Component {
       this.props.onPlaybackRateChange(event.nativeEvent);
     }
   };
-  
+
   _onExternalPlaybackChange = (event) => {
     if (this.props.onExternalPlaybackChange) {
       this.props.onExternalPlaybackChange(event.nativeEvent);
@@ -245,7 +275,7 @@ export default class Video extends Component {
     if (uri && uri.match(/^\//)) {
       uri = `file://${uri}`;
     }
-    
+
     if (!uri) {
       console.warn('Trying to load empty source.');
     }
@@ -315,6 +345,8 @@ export default class Video extends Component {
         <RCTVideo
           ref={this._assignRoot}
           {...nativeProps}
+            paused={this.state.paused}
+          rate={this.state.rate}
           style={StyleSheet.absoluteFill}
         />
         {this.state.showPoster && (
@@ -397,7 +429,7 @@ Video.propTypes = {
       PropTypes.string,
       PropTypes.number
     ])
-  }),  
+  }),
   selectedTextTrack: PropTypes.shape({
     type: PropTypes.string.isRequired,
     value: PropTypes.oneOfType([
@@ -417,7 +449,6 @@ Video.propTypes = {
       language: PropTypes.string.isRequired
     })
   ),
-  paused: PropTypes.bool,
   muted: PropTypes.bool,
   volume: PropTypes.number,
   bufferConfig: PropTypes.shape({
@@ -427,7 +458,6 @@ Video.propTypes = {
     bufferForPlaybackAfterRebufferMs: PropTypes.number,
   }),
   stereoPan: PropTypes.number,
-  rate: PropTypes.number,
   pictureInPicture: PropTypes.bool,
   playInBackground: PropTypes.bool,
   playWhenInactive: PropTypes.bool,

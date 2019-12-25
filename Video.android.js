@@ -92,7 +92,7 @@ class Video extends Component {
     );
   };
 
-  seekTo = (time) => {
+  seek = (time) => {
     UIManager.dispatchViewManagerCommand(
       findNodeHandle(this.ref),
       UIManager.getViewManagerConfig('RNEasyIjkplayerView').Commands.seekTo,

@@ -156,7 +156,7 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
 
     public void seekTo(long progress) {
         if (mIjkPlayer != null) {
-            mIjkPlayer.seekTo(progress);
+            mIjkPlayer.seekTo(progress * 1000);
         }
     }
 
