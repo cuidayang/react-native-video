@@ -1,11 +1,7 @@
-package com.ccenrun.zeroyeareducation.ijkplayer;
+package com.dycui.player;
 
-import android.graphics.Color;
 import android.util.Log;
 
-import com.ccenrun.zeroyeareducation.R;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableArray;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.common.MapBuilder;
@@ -20,8 +16,7 @@ import javax.annotation.Nullable;
 
 
 public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplayerView> {
-    private static final String TAG = "RNEasyIjkplayerViewManager";
-    private final String REACT_CLASS = "RNEasyIjkplayerView";
+    private static final String TAG = "RNEasyManager";
     private static final int COMMAND_PAUSE_ID = 1;
     private static final String COMMAND_PAUSE_NAME = "pause";
     private static final int COMMAND_PLAY_ID = 2;
@@ -30,9 +25,9 @@ public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplaye
     private static final String COMMAND_STOP_NAME = "stop";
     private static final int COMMAND_SEEK_TO_ID = 4;
     private static final String COMMAND_SEEK_TO_NAME = "seekTo";
-
     private static final int COMMAND_SET_SPEED_ID = 5;
     private static final String COMMAND_SET_SPEED_NAME = "setSpeed";
+    private final String REACT_CLASS = "RNEasyIjkplayerView";
 
     @Nonnull
     @Override
@@ -63,24 +58,24 @@ public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplaye
     public void setOptions(RNEasyIjkplayerView ijkPlayer, ReadableMap options) {
         /* auto start */
         int autoPlay = 0;
-        if(options.hasKey("autoPlay")){
+        if (options.hasKey("autoPlay")) {
             autoPlay = options.getInt("autoPlay");
-            Log.i(TAG,"autoPlay::"+autoPlay);
-            if(autoPlay == 1){
+            Log.i(TAG, "autoPlay::" + autoPlay);
+            if (autoPlay == 1) {
                 ijkPlayer.setMAutoPlay(1);
             }
         }
         /* url */
-        if(options.hasKey("url")){
+        if (options.hasKey("url")) {
             String url = options.getString("url");
-            Log.i(TAG,url);
+            Log.i(TAG, url);
             if (ijkPlayer.isPlaying()) {
-                Log.i(TAG,"isPlaying");
+                Log.i(TAG, "isPlaying");
                 ijkPlayer.restart(url);
             } else {
                 if (!url.equals("")) {
                     ijkPlayer.setDataSource(url);
-                    if(autoPlay == 1){
+                    if (autoPlay == 1) {
                         ijkPlayer.start();
                     }
                 }

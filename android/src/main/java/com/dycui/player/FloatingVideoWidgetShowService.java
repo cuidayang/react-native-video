@@ -1,4 +1,4 @@
-package com.ccenrun.zeroyeareducation.ijkplayer;
+package com.dycui.player;
 
 import android.app.Service;
 import android.content.Intent;
@@ -7,7 +7,6 @@ import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Display;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
@@ -25,8 +24,6 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
-import com.ccenrun.zeroyeareducation.R;
-import com.ccenrun.zeroyeareducation.utils.ToastUtil;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -45,6 +42,8 @@ import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 public class FloatingVideoWidgetShowService extends Service {
 
 
+    public static final int PROGRESS_UPDATE_INTERVAL_MILLS = 500;
+    public static int mDuration;
     private static ReadableMap playingVideo = null; // The video currently playing
     private static ReadableArray videoPlaylist = null; // List of videos
     private static int index = 0; // Index of playing video in videoPlaylist
@@ -62,8 +61,44 @@ public class FloatingVideoWidgetShowService extends Service {
     private int videoWidth = 250; // Default width of floating video player
     private int videoHeight = 180; // Default Height of floating video player
     private IjkMediaPlayer mIjkPlayer;
+    private Handler mHandler = new Handler();
+    private Runnable progressUpdateRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mIjkPlayer == null || mDuration == 0) {
+                return;
+            }
+            long currProgress = mIjkPlayer.getCurrentPosition();
+            int mCurrProgress = (int) Math.ceil((currProgress * 1.0f) / 1000);
+            //ToastUtil.show(reactContext, "" + mCurrProgress);
+
+            currentTimeView.setText(FloatingVideoWidgetShowService.timeParse(mCurrProgress));
+            durationView.setText(FloatingVideoWidgetShowService.timeParse((int) Math.ceil(mIjkPlayer.getDuration() / 1000)));
+            seekBar.setProgress(mCurrProgress);
+            mHandler.postDelayed(progressUpdateRunnable, PROGRESS_UPDATE_INTERVAL_MILLS);
+        }
+    };
 
     public FloatingVideoWidgetShowService() {
+    }
+
+    public static String timeParse(long duration) {
+        String time = "";
+
+        long minute = duration / 60;
+        long seconds = duration % 60;
+
+        if (minute < 10) {
+            time += "0";
+        }
+        time += minute + ":";
+
+        if (seconds < 10) {
+            time += "0";
+        }
+        time += seconds;
+
+        return time;
     }
 
     @Override
@@ -125,8 +160,7 @@ public class FloatingVideoWidgetShowService extends Service {
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-                    }
-                    else {
+                    } else {
 
                     }
                     videoView.setKeepScreenOn(true);
@@ -165,7 +199,6 @@ public class FloatingVideoWidgetShowService extends Service {
     private void initIjkMediaPlayer() {
         mIjkPlayer = new IjkMediaPlayer();
     }
-
 
     @Override
     public void onCreate() {
@@ -313,26 +346,7 @@ public class FloatingVideoWidgetShowService extends Service {
         });
     }
 
-    public static String timeParse(long duration) {
-        String time = "" ;
-
-        long minute = duration / 60 ;
-        long seconds = duration % 60 ;
-
-        if( minute < 10 ){
-            time += "0" ;
-        }
-        time += minute+":" ;
-
-        if( seconds < 10 ){
-            time += "0" ;
-        }
-        time += seconds;
-
-        return time ;
-    }
-
-    private void initIjkMediaPlayerListener(){
+    private void initIjkMediaPlayerListener() {
         mIjkPlayer.setOnErrorListener((iMediaPlayer, i, i1) -> {
             long seek = mIjkPlayer.getCurrentPosition();
             WritableMap args = new Arguments().createMap();
@@ -378,7 +392,7 @@ public class FloatingVideoWidgetShowService extends Service {
         });
 
         mIjkPlayer.setOnPreparedListener(iMediaPlayer -> {
-            mDuration = (int)Math.ceil(iMediaPlayer.getDuration()/1000);
+            mDuration = (int) Math.ceil(iMediaPlayer.getDuration() / 1000);
             mHandler.post(progressUpdateRunnable);
             seekBar.setMax(mDuration);
 //            ToastUtil.show(reactContext, mDuration + "");
@@ -389,25 +403,7 @@ public class FloatingVideoWidgetShowService extends Service {
             mIjkPlayer.seekTo(seek * 1000);
         });
     }
-    public static int mDuration;
-    private Handler mHandler = new Handler();
-    private Runnable progressUpdateRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (mIjkPlayer == null || mDuration == 0) {
-                return;
-            }
-            long currProgress = mIjkPlayer.getCurrentPosition();
-            int mCurrProgress = (int) Math.ceil((currProgress * 1.0f)/1000);
-            //ToastUtil.show(reactContext, "" + mCurrProgress);
 
-            currentTimeView.setText(FloatingVideoWidgetShowService.timeParse(mCurrProgress));
-            durationView.setText(FloatingVideoWidgetShowService.timeParse((int)Math.ceil(mIjkPlayer.getDuration()/1000)));
-            seekBar.setProgress(mCurrProgress);
-            mHandler.postDelayed(progressUpdateRunnable, PROGRESS_UPDATE_INTERVAL_MILLS);
-        }
-    };
-    public static final int PROGRESS_UPDATE_INTERVAL_MILLS = 500;
     private void sendEvent(ReactContext reactContext, String eventName, @Nullable WritableMap params) {
         reactContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
     }

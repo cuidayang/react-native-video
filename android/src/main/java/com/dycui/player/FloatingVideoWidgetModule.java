@@ -1,44 +1,26 @@
-package com.ccenrun.zeroyeareducation.ijkplayer;
+package com.dycui.player;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.widget.Toast;
+
+import com.facebook.react.bridge.ActivityEventListener;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.BaseActivityEventListener;
 import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.ActivityEventListener;
-import android.util.Log;
-import com.facebook.react.bridge.BaseActivityEventListener;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReadableMap;
-import com.facebook.react.bridge.ReadableArray;
-import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.ReadableNativeArray;
-import com.facebook.react.bridge.WritableMap;
-
-
-import android.app.Activity;
-import android.provider.Settings;
 
 
 public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
     private final ReactApplicationContext reactContext;
     private final int DRAW_OVER_OTHER_APP_PERMISSION_REQUEST_CODE = 2084;
+    private final String error = "Permission was not granted";
     private Promise mPromise;
-    private final String error  = "Permission was not granted";
-
-    public FloatingVideoWidgetModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        this.reactContext = reactContext;
-
-        this.reactContext.addActivityEventListener(mActivityEventListener);
-    }
-
     private final ActivityEventListener mActivityEventListener = new BaseActivityEventListener() {
         @Override
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
@@ -48,8 +30,7 @@ public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
                     if (Settings.canDrawOverlays(activity.getApplicationContext())) {
                         // Permission Granted by Overlay
                         mPromise.resolve(true);
-                    }
-                    else {
+                    } else {
                         mPromise.reject(new Throwable(error));
                     }
                 } else {
@@ -60,6 +41,12 @@ public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
         }
     };
 
+    public FloatingVideoWidgetModule(ReactApplicationContext reactContext) {
+        super(reactContext);
+        this.reactContext = reactContext;
+
+        this.reactContext.addActivityEventListener(mActivityEventListener);
+    }
 
     @Override
     public String getName() {
@@ -108,7 +95,7 @@ public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void requestOverlayPermission(Promise promise) {
         mPromise = promise;
-         /**
+        /**
          *  Before android 6.0 Marshmallow you dont need to ask for canDrawOverlays permission,
          *  but in newer android versions this is mandatory
          */
@@ -123,11 +110,11 @@ public class FloatingVideoWidgetModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void hasOverlayPermission(Promise promise) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(Settings.canDrawOverlays(this.reactContext)){
+            if (Settings.canDrawOverlays(this.reactContext)) {
                 promise.resolve(true);
+            } else {
+                promise.resolve(false);
             }
-            else {
-                promise.resolve(false);}
         } else {
             promise.resolve(true);
         }

@@ -1,5 +1,6 @@
-package com.ccenrun.zeroyeareducation.ijkplayer;
+package com.dycui.player;
 
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceHolder;
@@ -46,8 +47,9 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
         }
     };
 
-    public RNEasyIjkplayerView(ReactContext reactContext) {
-        super(reactContext);
+    public RNEasyIjkplayerView(Context context) {
+        super(context);
+        ReactContext reactContext = (ReactContext) context;
         reactContext.addLifecycleEventListener(this);
         initIjkMediaPlayer();
         initSurfaceView();
