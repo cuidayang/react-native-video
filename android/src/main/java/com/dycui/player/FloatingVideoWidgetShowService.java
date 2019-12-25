@@ -147,7 +147,7 @@ public class FloatingVideoWidgetShowService extends Service {
                     playingVideo = data.getMap("video");
                     videoPlaylist = data.getArray("videos");
                     index = data.getInt("index");
-                    int seek = data.getInt("seek");
+                    int seek = Integer.parseInt(data.getString("seek"));
                     //Uri myUri = Uri.parse(playingVideo.getString("url"));
                     if (!mIjkPlayer.isPlaying()) {
                         try {
@@ -399,7 +399,7 @@ public class FloatingVideoWidgetShowService extends Service {
             durationView.setText(FloatingVideoWidgetShowService.timeParse(mDuration));
             //seekBar.setMin(0);
 
-            int seek = initData.getInt("seek");
+            int seek = Integer.parseInt(initData.getString("seek"));
             mIjkPlayer.seekTo(seek * 1000);
         });
     }

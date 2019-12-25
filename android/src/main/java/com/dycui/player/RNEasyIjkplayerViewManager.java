@@ -57,14 +57,6 @@ public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplaye
     @ReactProp(name = "options")
     public void setOptions(RNEasyIjkplayerView ijkPlayer, ReadableMap options) {
         /* auto start */
-        int autoPlay = 0;
-        if (options.hasKey("autoPlay")) {
-            autoPlay = options.getInt("autoPlay");
-            Log.i(TAG, "autoPlay::" + autoPlay);
-            if (autoPlay == 1) {
-                ijkPlayer.setMAutoPlay(1);
-            }
-        }
         /* url */
         if (options.hasKey("uri")) {
             String uri = options.getString("uri");

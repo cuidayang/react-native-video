@@ -28,7 +28,6 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
     public static final int PROGRESS_UPDATE_INTERVAL_MILLS = 500;
     private IjkMediaPlayer mIjkPlayer;
     public static int mDuration;
-    public static int mAutoPlay = 0;
     public static WritableMap size = Arguments.createMap();
     private String mCurrUrl;
     private boolean mManualPause;
@@ -145,15 +144,6 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
                 event);
     }
 
-
-    public void setMAutoPlay(int autoPlay) {
-        mAutoPlay = autoPlay;
-    }
-
-    public int getMAutoPlay() {
-        return mAutoPlay;
-    }
-
     public void seekTo(long progress) {
         if (mIjkPlayer != null) {
             mIjkPlayer.seekTo(progress * 1000);
@@ -186,13 +176,11 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
             } else { //第一次播放
                 mIjkPlayer.prepareAsync();
             }
-            resetSurfaceView();
             mManualPause = false;
         } else {
             setDataSource(mCurrUrl);
             initIjkMediaPlayerListener();
             initSurfaceView();
-            resetSurfaceView();
             mIjkPlayer.prepareAsync();
             mManualStop = false;
         }

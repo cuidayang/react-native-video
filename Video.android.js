@@ -11,20 +11,20 @@ import {
   ToastAndroid
 } from 'react-native';
 import PropTypes from 'prop-types';
-import FloatingVideo from './FloatingVideo';
+import * as FloatingVideo from './FloatingVideo';
 const defaultIndicatorSize = 16;
 const {width: D_WIDTH} = Dimensions.get('window');
 
 class Video extends Component {
   static propTypes = {
     showIndicator: PropTypes.bool,
-    options: PropTypes.object,
     onComplete: PropTypes.func,
-    onPrepared: PropTypes.func,
+    onLoad: PropTypes.func,
     onError: PropTypes.func,
     onInfo: PropTypes.func,
     onProgressUpdate: PropTypes.func,
     onLoadProgressUpdate: PropTypes.func,
+    source: PropTypes.object
   };
 
   constructor(props) {
@@ -113,7 +113,7 @@ class Video extends Component {
       if (value) {
         FloatingVideo.open({
           video: {
-            url: this.props.options.url,
+            url: this.props.source.uri,
           },
           seek: this.currentTime
         });
@@ -129,7 +129,7 @@ class Video extends Component {
                       .then(() => {
                         FloatingVideo.open({
                           video: {
-                            url: this.props.options.url,
+                            url: this.props.source.uri,
                           },
                           seek: this.currentTime,
                         });
@@ -160,14 +160,14 @@ class Video extends Component {
 
   _onProgressUpdate = ({nativeEvent: {progress}}) => {
     this.currentTime = progress;
-    const {onProgressUpdate} = this.props;
-    onProgressUpdate && onProgressUpdate(progress);
+    const {onProgress} = this.props;
+    onProgress && onProgress(progress);
   };
 
-  _onPrepared = (event) => {
+  _onPrepared = ({nativeEvent: {duration}}) => {
     console.log('on prepared');
-    const {onPrepared} = this.props;
-    onPrepared && onPrepared(event);
+    const {onLoad} = this.props;
+    onLoad && onLoad({duration});
 
     this.setState({showIndicator: false});
     this.getSize((err, size) => {
@@ -233,7 +233,7 @@ class Video extends Component {
           bottom: 0,
         }}
         {...this.props}
-
+        options={this.props.source}
         ref={ref => this.ref = ref}
         onPrepared={this._onPrepared}
         onProgressUpdate={this._onProgressUpdate}
