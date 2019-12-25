@@ -13,7 +13,7 @@ import com.facebook.react.bridge.JavaScriptModule;
 public class RNEasyIjkplayerPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-      return Arrays.<NativeModule>asList(new RNEasyIjkplayerModule(reactContext));
+      return Arrays.<NativeModule>asList(new RNEasyIjkplayerModule(reactContext), new FloatingVideoWidgetModule(reactContext));
     }
 
     // Deprecated from RN 0.47
