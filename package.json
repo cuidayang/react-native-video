@@ -2,7 +2,7 @@
     "name": "react-native-video",
     "version": "5.1.0-alpha1",
     "description": "A <Video /> element for react-native",
-    "main": "Video.js",
+    "main": "index.js",
     "license": "MIT",
     "author": "Brent Vatne <brentvatne@gmail.com> (https://github.com/brentvatne)",
     "contributors": [
@@ -46,7 +46,6 @@
         "test": "node_modules/.bin/eslint *.js"
     },
     "files": [
-        "android-exoplayer",
         "android",
         "dom",
         "ios",
@@ -54,6 +53,9 @@
         "FilterType.js",
         "TextTrackType.js",
         "VideoResizeMode.js",
+        "Video.ios.js",
+        "Video.android.js",
+        "FloatingVideo.js",
         "react-native-video.podspec"
     ]
 }
