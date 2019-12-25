@@ -88,7 +88,7 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 mDuration = (int)Math.ceil(mIjkPlayer.getDuration()/1000);
                 mHandler.post(progressUpdateRunnable);
-                sendEvent(NAME_PREPARE_EVENT, "isPrepare", "1");
+                sendEvent(NAME_PREPARE_EVENT, "duration", mDuration + "");
             }
         });
 

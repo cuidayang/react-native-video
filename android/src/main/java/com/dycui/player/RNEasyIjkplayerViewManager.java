@@ -66,18 +66,16 @@ public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplaye
             }
         }
         /* url */
-        if (options.hasKey("url")) {
-            String url = options.getString("url");
-            Log.i(TAG, url);
+        if (options.hasKey("uri")) {
+            String uri = options.getString("uri");
+            Log.i(TAG, uri);
             if (ijkPlayer.isPlaying()) {
                 Log.i(TAG, "isPlaying");
-                ijkPlayer.restart(url);
+                ijkPlayer.restart(uri);
             } else {
-                if (!url.equals("")) {
-                    ijkPlayer.setDataSource(url);
-                    if (autoPlay == 1) {
-                        ijkPlayer.start();
-                    }
+                if (!uri.equals("")) {
+                    ijkPlayer.setDataSource(uri);
+                    ijkPlayer.start();
                 }
             }
         }
