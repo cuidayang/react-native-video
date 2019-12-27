@@ -17,6 +17,7 @@ import java.io.IOException;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
+
 public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventListener {
 
     private static final String TAG = "IJKPlayer";
@@ -86,6 +87,9 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 mDuration = (int)Math.ceil(mIjkPlayer.getDuration()/1000);
+                Log.i(TAG, "width:" + iMediaPlayer.getVideoWidth() + " height:" + iMediaPlayer.getVideoHeight());
+                size.putInt("width", iMediaPlayer.getVideoWidth());
+                size.putInt("height", iMediaPlayer.getVideoHeight());
                 mHandler.post(progressUpdateRunnable);
                 sendEvent(NAME_PREPARE_EVENT, "duration", mDuration + "");
             }
@@ -146,7 +150,7 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
 
     public void seekTo(long progress) {
         if (mIjkPlayer != null) {
-            mIjkPlayer.seekTo(progress);
+            mIjkPlayer.seekTo(progress * 1000);
         }
     }
 

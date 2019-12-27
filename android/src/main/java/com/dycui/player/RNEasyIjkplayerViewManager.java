@@ -101,7 +101,7 @@ public class RNEasyIjkplayerViewManager extends SimpleViewManager<RNEasyIjkplaye
             case COMMAND_SEEK_TO_ID:
                 int progress = args.getInt(0);
                 Log.i(TAG, "seek Progress:" + progress);
-                root.seekTo(progress * 1000);
+                root.seekTo(progress);
                 break;
             case COMMAND_SET_SPEED_ID:
                 double speed = args.getDouble(0);
