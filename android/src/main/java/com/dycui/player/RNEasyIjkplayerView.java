@@ -249,8 +249,10 @@ public class RNEasyIjkplayerView extends SurfaceView implements LifecycleEventLi
     @Override
     public void onHostDestroy() {
         Log.i(TAG, "onHostDestroy");
-        mIjkPlayer.stop();
-        mIjkPlayer.release();
+        if(mIjkPlayer != null){
+            mIjkPlayer.stop();
+                  mIjkPlayer.release();
+          }
         mHandler.removeCallbacks(progressUpdateRunnable);
     }
 }
